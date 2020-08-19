@@ -8,6 +8,7 @@ using UnityEngine.UIElements;
 
 public class MovingPlatform : MonoBehaviour
 {
+    //Hola mamor
     //Attributes
     public Transform from, to;
     private Vector3 origin, destiny;
