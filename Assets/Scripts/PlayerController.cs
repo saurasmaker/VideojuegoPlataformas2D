@@ -3,49 +3,49 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
-{
+{ 
 
-
-    //Attributes
+    //Psysics Attributes
     public float maxSpeed = 15f;
     public float speed = 10f;
-    public float jumpPower = 6.5f;
+    public float jumpPower = 9.25f;
+    public float friction = 0.75f;
 
     private Rigidbody2D rb2d;
     private Animator animator;
-    private Collider2D collider;
+    private Collider2D coll;
 
-    public bool isGrounded, isJumping, isFalling;
+    private bool isGrounded, isJumping, isFalling;
+
+
 
     // Start is called before the first frame update
     void Start()
     {
-        rb2d = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-        collider = GetComponent<Collider2D>();
+        this.rb2d = GetComponent<Rigidbody2D>();
+        this.animator = GetComponent<Animator>();
+        this.coll = GetComponent<Collider2D>();
+
+        return;
     }
 
     // Update is called once per frame
     void Update()
     {
-
         if (Input.GetKeyDown(KeyCode.Space)) isJumping = true;
         
         CheckState(rb2d.velocity.x, rb2d.velocity.y);
+
         SetAnimations();
+
+        return;
     }
 
     private void FixedUpdate()
     {
-        float x = Input.GetAxis("Horizontal");
-        float y = Input.GetAxis("Vertical");
+        SetFriction();
 
-        rb2d.AddForce(Vector2.right * speed * x);
-        //rb2d.AddForce(Vector2.up * speed * y * 5);
-
-        float limitedSpeedX = Mathf.Clamp(rb2d.velocity.x, -maxSpeed, maxSpeed);
-        //float limitedSpeedY = Mathf.Clamp(rb2d.velocity.y, -maxSpeed, maxSpeed);
-        rb2d.velocity = new Vector2(limitedSpeedX, rb2d.velocity.y/*limitedSpeedY*/);
+        SetMove();
 
         Debug.Log("Velocidad Horizontal: " + rb2d.velocity.x + "\n Velocidad Vertical: " + rb2d.velocity.y + "\n Saltando: " + isJumping + "\n Cayendo: " + isFalling);
 
@@ -56,14 +56,28 @@ public class PlayerController : MonoBehaviour
     {
         if(collision.gameObject.tag == "Ground")
             isGrounded = true;
+
+        return;
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Ground")
             isGrounded = false;
+
+        return;
     }
 
+    void OnBecameInvisible()
+    {
+        LoseLife();
+
+        return;
+    }
+
+
+
+    //My methods
     private void CheckState(float x, float y)
     {
         if (y < 0) isFalling = true;
@@ -91,11 +105,44 @@ public class PlayerController : MonoBehaviour
         return;
     }
 
-    void OnBecameInvisible()
+    private void SetMove()
     {
+        float x = Input.GetAxis("Horizontal");
 
-        transform.position = new Vector3(-12, -3, -1);
+        rb2d.AddForce(Vector2.right * speed * x);
+
+        float limitedSpeedX = Mathf.Clamp(rb2d.velocity.x, -maxSpeed, maxSpeed);
+        rb2d.velocity = new Vector2(limitedSpeedX, rb2d.velocity.y);
 
         return;
     }
+
+    private void SetFriction()
+    {
+        Vector3 fixedVelocity = rb2d.velocity;
+        fixedVelocity *= friction;
+
+        if (isGrounded) rb2d.velocity = fixedVelocity;
+
+        return;
+    }
+
+
+    private void LoseLife()
+    {
+        if (lifes > 0)
+        {
+            transform.position = new Vector3(-12, -3, -1);
+            --lifes;
+        }
+
+        //else GameOver.
+
+        return;
+    }
+
+
+    //Gameplay Attributes
+    public int coins = 0;
+    public int lifes = 3;
 }
