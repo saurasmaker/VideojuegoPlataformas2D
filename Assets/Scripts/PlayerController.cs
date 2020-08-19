@@ -52,10 +52,29 @@ public class PlayerController : MonoBehaviour
         return;
     }
 
+
+    private void OnCollisionEnter2D(Collision2D collision) 
+    {
+        if (collision.gameObject.tag == "MovingPlatform")
+        {
+            rb2d.velocity = Vector3.zero;
+            transform.parent = collision.transform;
+
+            isGrounded = true;
+        }
+
+        return;
+    }
+
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if(collision.gameObject.tag == "Ground" || collision.gameObject.tag == "MovingPlatform")
-            isGrounded = true;
+        if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "MovingPlatform")
+        {
+            if (collision.gameObject.tag == "MovingPlatform")
+                transform.parent = collision.transform;
+            
+            isGrounded = true;  
+        }
 
         return;
     }
@@ -63,7 +82,12 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "MovingPlatform")
+        {
+            if(collision.gameObject.tag == "MovingPlatform")
+                transform.parent = null;
+
             isGrounded = false;
+        }
 
         return;
     }
@@ -83,7 +107,7 @@ public class PlayerController : MonoBehaviour
         if (y < 0) isFalling = true;
         else isFalling = false;
 
-        if (isJumping && isGrounded) { 
+        if (isJumping && isGrounded && !isFalling) { 
             rb2d.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
             isJumping = false;
         }
