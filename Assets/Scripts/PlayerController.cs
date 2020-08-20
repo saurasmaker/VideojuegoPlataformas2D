@@ -4,7 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
-{ 
+{
+    //End of Game
+    public Canvas gameOver, youWin;
+
 
     //Psysics Attributes
     public float maxSpeed = 15f;
@@ -27,6 +30,9 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        youWin.enabled = false;
+        gameOver.enabled = false;
+        Time.timeScale = 1;
         this.rb2d = GetComponent<Rigidbody2D>();
         this.animator = GetComponent<Animator>();
 
@@ -178,7 +184,7 @@ public class PlayerController : MonoBehaviour
         if (lifes > 0)
             Invoke("MoveToSpawn", 0.5f);
 
-        //else GameOver.
+        else GameOver();
 
         return;
     }
@@ -188,6 +194,24 @@ public class PlayerController : MonoBehaviour
         transform.position = new Vector3(-12, -3, -1);
         GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         --lifes;
+
+        return;
+    }
+
+    public void YouWin()
+    {
+        youWin.enabled = true;
+        gameOver.enabled = false;
+        Time.timeScale = 0;
+
+        return;
+    }
+
+    public void GameOver()
+    {
+        gameOver.enabled = true;
+        youWin.enabled = false;
+        Time.timeScale = 0;
 
         return;
     }

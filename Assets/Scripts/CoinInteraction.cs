@@ -16,9 +16,18 @@ public class CoinInteraction : MonoBehaviour
     // Update is called once per frame
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        PlayerController player = collision.GetComponentInParent<PlayerController>();
         if (getCoinSound != null)  Instantiate(getCoinSound); 
         if (collision.CompareTag("Player")) Destroy(gameObject);
-        collision.GetComponentInParent<PlayerController>().coins++;
+        player.coins++;
+
+        if (player.coins >= 2)
+        {
+            player.youWin.enabled = true;
+            Time.timeScale = 0;
+
+            return;
+        }
 
     }
 
