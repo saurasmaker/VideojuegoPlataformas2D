@@ -14,8 +14,6 @@ public class MovingPlatform : MonoBehaviour
 
     public float speed = 1f;
 
-    private bool back = false;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -44,17 +42,6 @@ public class MovingPlatform : MonoBehaviour
         }
 
         return;
-    }
-
-    private bool CheckBack()
-    {
-        if (transform.position == destiny)
-            return true;
-
-        else if (transform.position == origin)
-            return false;
-
-        return false;
     }
 
     public object Clone()

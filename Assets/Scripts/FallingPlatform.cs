@@ -9,13 +9,16 @@ public class FallingPlatform : MonoBehaviour
 
     private Rigidbody2D rb2d;
     private EdgeCollider2D ec2d;
+    private BoxCollider2D bc2d;
     private Vector3 origin;
 
     // Start is called before the first frame update
     void Start()
     {
-        rb2d = GetComponentInParent<Rigidbody2D>();
-        ec2d = GetComponent<EdgeCollider2D>();       
+        rb2d = GetComponent<Rigidbody2D>();
+        ec2d = GetComponent<EdgeCollider2D>();
+        bc2d = GetComponent<BoxCollider2D>();
+
         origin = transform.position;
     }
 
@@ -38,6 +41,7 @@ public class FallingPlatform : MonoBehaviour
     {
         rb2d.isKinematic = false;
         ec2d.isTrigger = true;
+        bc2d.isTrigger = true;
 
         return;
     }
@@ -48,6 +52,7 @@ public class FallingPlatform : MonoBehaviour
         transform.position = origin;
         rb2d.isKinematic = true;
         ec2d.isTrigger = false;
+        bc2d.isTrigger = false;
 
         return;
     }

@@ -13,7 +13,6 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody2D rb2d;
     private Animator animator;
-    private Collider2D coll;
 
     private bool isGrounded, isJumping, isFalling;
 
@@ -24,7 +23,6 @@ public class PlayerController : MonoBehaviour
     {
         this.rb2d = GetComponent<Rigidbody2D>();
         this.animator = GetComponent<Animator>();
-        this.coll = GetComponent<Collider2D>();
 
         return;
     }
@@ -55,11 +53,10 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision) 
     {
-        if (collision.gameObject.tag == "MovingPlatform")
+        if (collision.gameObject.CompareTag("MovingPlatform"))
         {
             rb2d.velocity = Vector3.zero;
             transform.parent = collision.transform;
-
             isGrounded = true;
         }
 
@@ -68,12 +65,15 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "MovingPlatform")
-        {
-            if (collision.gameObject.tag == "MovingPlatform")
-                transform.parent = collision.transform;
-            
+        if (collision.gameObject.CompareTag("Ground"))
+        {      
             isGrounded = true;  
+        }
+
+        if (collision.gameObject.CompareTag("MovingPlatform"))
+        {
+            transform.parent = collision.transform;
+            isGrounded = true;
         }
 
         return;
@@ -81,11 +81,14 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "MovingPlatform")
+        if (collision.gameObject.CompareTag("Ground"))
         {
-            if(collision.gameObject.tag == "MovingPlatform")
-                transform.parent = null;
+            isGrounded = false;
+        }
 
+        if (collision.gameObject.CompareTag("MovingPlatform"))
+        {
+            transform.parent = null;
             isGrounded = false;
         }
 
@@ -104,10 +107,13 @@ public class PlayerController : MonoBehaviour
     //My methods
     private void CheckState(float x, float y)
     {
-        if (y < 0) isFalling = true;
+        if (y < 0) { 
+            isFalling = true;
+            isGrounded = false;
+        }
         else isFalling = false;
 
-        if (isJumping && isGrounded && !isFalling) { 
+        if (isJumping && (isGrounded)) { 
             rb2d.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
             isJumping = false;
         }
@@ -143,10 +149,13 @@ public class PlayerController : MonoBehaviour
 
     private void SetFriction()
     {
-        Vector3 fixedVelocity = rb2d.velocity;
-        fixedVelocity *= friction;
+        if (isGrounded) {
+            Vector3 fixedVelocity = rb2d.velocity;
+            fixedVelocity *= friction;
+            rb2d.velocity = fixedVelocity;
+        }
 
-        if (isGrounded) rb2d.velocity = fixedVelocity;
+        
 
         return;
     }
@@ -164,7 +173,6 @@ public class PlayerController : MonoBehaviour
 
         return;
     }
-
 
     //Gameplay Attributes
     public int coins = 0;
