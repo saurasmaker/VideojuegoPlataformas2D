@@ -106,13 +106,13 @@ public class PlayerController : MonoBehaviour
         return;
     }
 
-    void OnBecameInvisible()
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        LoseLife();
-
+        if (collision.CompareTag("Water"))       
+            LoseLife();
+        
         return;
     }
-
 
 
     //My methods
@@ -173,15 +173,21 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    private void LoseLife()
+    public void LoseLife()
     {
         if (lifes > 0)
-        {
-            transform.position = new Vector3(-12, -3, -1);
-            --lifes;
-        }
+            Invoke("MoveToSpawn", 0.5f);
 
         //else GameOver.
+
+        return;
+    }
+
+    public void MoveToSpawn()
+    {
+        transform.position = new Vector3(-12, -3, -1);
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        --lifes;
 
         return;
     }
