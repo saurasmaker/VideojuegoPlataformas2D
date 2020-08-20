@@ -6,6 +6,8 @@ public class FallingPlatform : MonoBehaviour
 {
     public float fallDelay = 1f;
     public float respawnDelay = 5f;
+    public GameObject avalancheSound;
+    public GameObject spawnSound;
 
     private Rigidbody2D rb2d;
     private EdgeCollider2D ec2d;
@@ -39,6 +41,7 @@ public class FallingPlatform : MonoBehaviour
 
     void Fall()
     {
+        if (avalancheSound!= null) Instantiate(avalancheSound);
         rb2d.isKinematic = false;
         ec2d.isTrigger = true;
         bc2d.isTrigger = true;
@@ -48,6 +51,7 @@ public class FallingPlatform : MonoBehaviour
 
     void Respawn()
     {
+        if (spawnSound != null) Instantiate(spawnSound);
         rb2d.velocity = Vector3.zero;
         transform.position = origin;
         rb2d.isKinematic = true;

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 { 
@@ -16,7 +17,12 @@ public class PlayerController : MonoBehaviour
 
     private bool isGrounded, isJumping, isFalling;
 
+    //Sonido
+    public GameObject jumpingSound;
 
+    //UI
+    public Text coinsText;
+    public Text lifesText;
 
     // Start is called before the first frame update
     void Start()
@@ -41,6 +47,11 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+
+        coinsText.text = coins.ToString();
+        lifesText.text = lifes.ToString();
+
+
         SetFriction();
 
         SetMove();
@@ -113,7 +124,8 @@ public class PlayerController : MonoBehaviour
         }
         else isFalling = false;
 
-        if (isJumping && (isGrounded)) { 
+        if (isJumping && isGrounded) {
+            if (jumpingSound != null) Instantiate(jumpingSound);
             rb2d.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
             isJumping = false;
         }
