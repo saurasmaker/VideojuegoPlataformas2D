@@ -7,7 +7,6 @@ public class CoinInteraction : MonoBehaviour
     //Attributes
     public GameObject getCoinSound;
 
-
     // Start is called before the first frame update
     void Start()
     {
@@ -21,7 +20,7 @@ public class CoinInteraction : MonoBehaviour
         if (collision.CompareTag("Player")) Destroy(gameObject);
         player.coins++;
 
-        if (player.coins >= 2)
+        if (player.coins >= player.coinsToGet)
         {
             player.youWin.enabled = true;
             Time.timeScale = 0;

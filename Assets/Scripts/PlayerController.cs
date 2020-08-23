@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     public float speed = 10f;
     public float jumpPower = 9.25f;
     public float friction = 0.75f;
+    public byte coinsToGet = 0;
 
     private Rigidbody2D rb2d;
     private Animator animator;

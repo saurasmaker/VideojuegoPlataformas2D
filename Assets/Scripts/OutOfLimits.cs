@@ -10,7 +10,7 @@ public class OutOfLimits : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            collision.gameObject.transform.position = new Vector3(ec2dMirror.transform.position.x, collision.gameObject.transform.position.y, collision.gameObject.transform.position.z); 
+            //collision.gameObject.transform.position = new Vector3(ec2dMirror.transform.position.x, collision.gameObject.transform.position.y, collision.gameObject.transform.position.z); 
         }
     }
 }
