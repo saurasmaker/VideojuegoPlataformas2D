@@ -5,27 +5,33 @@ using UnityEngine;
 public class CoinInteraction : MonoBehaviour
 {
     //Attributes
-    public GameObject getCoinSound;
+    private AudioSource getCoinSound;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
+        getCoinSound = gameObject.GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
+    private void Start()
+    {
+        
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        getCoinSound.Play();
         PlayerController player = collision.GetComponentInParent<PlayerController>();
-        if (getCoinSound != null)  Instantiate(getCoinSound); 
-        if (collision.CompareTag("Player")) Destroy(gameObject);
+        if (collision.CompareTag("Player"))
+        {
+            GetComponent<Collider2D>().enabled = false;
+            GetComponent<SpriteRenderer>().color = Color.clear;
+        }
         player.coins++;
 
         if (player.coins >= player.coinsToGet)
         {
             player.youWin.enabled = true;
             Time.timeScale = 0;
-
-            return;
         }
 
     }

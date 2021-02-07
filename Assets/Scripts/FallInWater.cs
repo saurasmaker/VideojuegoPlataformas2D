@@ -4,15 +4,32 @@ using UnityEngine;
 
 public class FallInWater : MonoBehaviour
 {
-    public GameObject getFallinWaterSound;
+    private AudioSource fallingWaterSound;
+    private PlayerController pc;
+
+    private void Awake()
+    {
+        fallingWaterSound = GetComponent<AudioSource>();
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
-    {
+    {       
         if (collision.CompareTag("Player"))
         {
-            if (getFallinWaterSound != null) Instantiate(getFallinWaterSound);
-            PlayerController p = collision.gameObject.GetComponent<PlayerController>();
-            p.LoseLife();
+            pc = collision.GetComponent<PlayerController>();
+            if (pc.canDie)
+            {
+                pc.canDie = false;
+                fallingWaterSound.Play();
+                PlayerController p = collision.gameObject.GetComponent<PlayerController>();
+                p.LoseLife();
+                Invoke(nameof(SetCanDieTrue), 0.5f);
+            }
         }
+    }
+
+    public void SetCanDieTrue()
+    {
+        pc.canDie = true;
     }
 }

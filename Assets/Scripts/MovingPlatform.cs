@@ -10,9 +10,13 @@ public class MovingPlatform : MonoBehaviour
 {
     //Attributes
     public Transform from, to;
+    
+    
     private Vector3 origin, destiny;
 
     public float speed = 1f;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -39,6 +43,21 @@ public class MovingPlatform : MonoBehaviour
             {
                 to.position = (to.position == origin) ? destiny : origin;
             }
+        }
+
+        return;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+
+        if (from != null && to != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(from.position, to.position);
+
+            Gizmos.DrawSphere(from.position, 0.15f);
+            Gizmos.DrawSphere(to.position, 0.15f);
         }
 
         return;

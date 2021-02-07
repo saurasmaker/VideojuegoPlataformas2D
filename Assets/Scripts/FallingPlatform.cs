@@ -6,9 +6,9 @@ public class FallingPlatform : MonoBehaviour
 {
     public float fallDelay = 1f;
     public float respawnDelay = 5f;
-    public GameObject avalancheSound;
-    public GameObject spawnSound;
-
+    
+    private AudioSource fallingSound;
+    private AudioSource spawnSound;
     private Rigidbody2D rb2d;
     private EdgeCollider2D ec2d;
     private BoxCollider2D bc2d;
@@ -17,6 +17,8 @@ public class FallingPlatform : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        fallingSound = transform.GetChild(0).GetComponent<AudioSource>();
+        spawnSound = transform.GetChild(1).GetComponent<AudioSource>();
         rb2d = GetComponent<Rigidbody2D>();
         ec2d = GetComponent<EdgeCollider2D>();
         bc2d = GetComponent<BoxCollider2D>();
@@ -24,11 +26,6 @@ public class FallingPlatform : MonoBehaviour
         origin = transform.position;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -41,23 +38,19 @@ public class FallingPlatform : MonoBehaviour
 
     void Fall()
     {
-        if (avalancheSound!= null) Instantiate(avalancheSound);
+        fallingSound.Play();
         rb2d.isKinematic = false;
         ec2d.isTrigger = true;
         bc2d.isTrigger = true;
-
-        return;
     }
 
     void Respawn()
     {
-        if (spawnSound != null) Instantiate(spawnSound);
+        spawnSound.Play();
         rb2d.velocity = Vector3.zero;
         transform.position = origin;
         rb2d.isKinematic = true;
         ec2d.isTrigger = false;
         bc2d.isTrigger = false;
-
-        return;
     }
 }

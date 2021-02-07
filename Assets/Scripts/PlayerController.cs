@@ -5,9 +5,11 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
+    [HideInInspector]
+    public bool canDie;
+
     //End of Game
     public Canvas gameOver, youWin;
-
 
     //Psysics Attributes
     public float maxSpeed = 15f;
@@ -21,12 +23,20 @@ public class PlayerController : MonoBehaviour
 
     private bool isGrounded, isJumping, isFalling;
 
-    //Sonido
-    public GameObject jumpingSound;
+    private AudioSource jumpingSound;
 
     //UI
     public Text coinsText;
     public Text lifesText;
+
+
+    private void Awake()
+    {
+        canDie = true;
+        this.rb2d = GetComponent<Rigidbody2D>();
+        this.animator = GetComponent<Animator>();
+        this.jumpingSound = GetComponent<AudioSource>();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -34,10 +44,6 @@ public class PlayerController : MonoBehaviour
         youWin.enabled = false;
         gameOver.enabled = false;
         Time.timeScale = 1;
-        this.rb2d = GetComponent<Rigidbody2D>();
-        this.animator = GetComponent<Animator>();
-
-        return;
     }
 
     // Update is called once per frame
@@ -48,8 +54,6 @@ public class PlayerController : MonoBehaviour
         CheckState(rb2d.velocity.x, rb2d.velocity.y);
 
         SetAnimations();
-
-        return;
     }
 
     private void FixedUpdate()
@@ -62,10 +66,6 @@ public class PlayerController : MonoBehaviour
         SetFriction();
 
         SetMove();
-
-        Debug.Log("Velocidad Horizontal: " + rb2d.velocity.x + "\n Velocidad Vertical: " + rb2d.velocity.y + "\n Saltando: " + isJumping + "\n Cayendo: " + isFalling);
-
-        return;
     }
 
 
@@ -76,9 +76,7 @@ public class PlayerController : MonoBehaviour
             rb2d.velocity = Vector3.zero;
             transform.parent = collision.transform;
             isGrounded = true;
-        }
-
-        return;
+        }     
     }
 
     private void OnCollisionStay2D(Collision2D collision)
@@ -93,8 +91,6 @@ public class PlayerController : MonoBehaviour
             transform.parent = collision.transform;
             isGrounded = true;
         }
-
-        return;
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -109,16 +105,6 @@ public class PlayerController : MonoBehaviour
             transform.parent = null;
             isGrounded = false;
         }
-
-        return;
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Water"))       
-            LoseLife();
-        
-        return;
     }
 
 
@@ -132,15 +118,13 @@ public class PlayerController : MonoBehaviour
         else isFalling = false;
 
         if (isJumping && isGrounded) {
-            if (jumpingSound != null) Instantiate(jumpingSound);
+            jumpingSound.Play();
             rb2d.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
             isJumping = false;
         }
 
         if (x < -0.1) transform.localScale = new Vector3(-1f, 1f, 1f);
         else if (x > 0.1) transform.localScale = new Vector3(1f, 1f, 1f); ;
-
-        return;
     }
 
     private void SetAnimations()
@@ -150,8 +134,6 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("Grounded", isGrounded);
         animator.SetBool("Jumping", isJumping);
         animator.SetBool("Falling", isFalling);
-
-        return;
     }
 
     private void SetMove()
@@ -162,8 +144,6 @@ public class PlayerController : MonoBehaviour
 
         float limitedSpeedX = Mathf.Clamp(rb2d.velocity.x, -maxSpeed, maxSpeed);
         rb2d.velocity = new Vector2(limitedSpeedX, rb2d.velocity.y);
-
-        return;
     }
 
     private void SetFriction()
@@ -173,21 +153,19 @@ public class PlayerController : MonoBehaviour
             fixedVelocity *= friction;
             rb2d.velocity = fixedVelocity;
         }
-
-        
-
-        return;
     }
 
 
     public void LoseLife()
     {
         if (lifes > 0)
+        {
+            canDie = false;
             Invoke("MoveToSpawn", 0.5f);
+            Invoke("SetCanDieTrue", 0.5f);
+        }
 
         else GameOver();
-
-        return;
     }
 
     public void MoveToSpawn()
@@ -195,8 +173,6 @@ public class PlayerController : MonoBehaviour
         transform.position = new Vector3(-12, -3, -1);
         GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         --lifes;
-
-        return;
     }
 
     public void YouWin()
@@ -204,8 +180,6 @@ public class PlayerController : MonoBehaviour
         youWin.enabled = true;
         gameOver.enabled = false;
         Time.timeScale = 0;
-
-        return;
     }
 
     public void GameOver()
@@ -213,9 +187,9 @@ public class PlayerController : MonoBehaviour
         gameOver.enabled = true;
         youWin.enabled = false;
         Time.timeScale = 0;
-
-        return;
     }
+
+    
 
     //Gameplay Attributes
     public int coins = 0;
